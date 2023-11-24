@@ -1,7 +1,15 @@
 module Api
   module V1
     class TransactionsController < ApplicationController
-      def index; end
+      def index
+        transactions = @current_user.all_transactions
+        render json: TransactionSerializer.render(transactions)
+      end
+
+      def show
+        transaction = Transaction.find_by!(id: params[:id])
+        render json: TransactionSerializer.render(transaction)
+      end
 
       def create
         transaction = Transaction.new(transaction_params)
