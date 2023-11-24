@@ -2,17 +2,17 @@ require 'base64'
 require 'openssl'
 require 'json'
 
-class JwtService
+class Jwt
   class << self
     SECRET_KEY = ENV['JWT_SECRET_KEY'] || 'default_secret_key'
 
     def encode(payload, algorithm = 'HS256')
-      payload[:exp] = 1.minute.from_now.to_i # Expiration time
+      payload[:exp] = 1.hour.from_now.to_i # Expiration time
 
       header = { typ: 'JWT', alg: algorithm }
       encoded_header = base64_url_encode(header.to_json)
       encoded_payload = base64_url_encode(payload.to_json)
-      signature = generate_signature("#{encoded_header}.#{encoded_payload}", SECRET_KEY, algorithm)
+      signature = generate_signature("#{encoded_header}.#{encoded_payload}", algorithm)
 
       "#{encoded_header}.#{encoded_payload}.#{signature}"
     end
@@ -21,7 +21,9 @@ class JwtService
       encoded_header, encoded_payload, signature = token.split('.')
       payload = JSON.parse(base64_url_decode(encoded_payload))
 
-      payload if valid_signature?("#{encoded_header}.#{encoded_payload}", signature, SECRET_KEY, algorithm)
+      return nil if payload['exp'] && Time.now.to_i > payload['exp']
+
+      payload if valid_signature?("#{encoded_header}.#{encoded_payload}", signature, algorithm)
     end
 
     def base64_url_encode(data)
@@ -33,14 +35,14 @@ class JwtService
       Base64.strict_decode64(padded_data.tr('-_', '+/'))
     end
 
-    def generate_signature(data, secret_key, algorithm)
+    def generate_signature(data, algorithm)
       digest = OpenSSL::Digest.new(algorithm.gsub('HS', 'sha'))
-      hmac = OpenSSL::HMAC.digest(digest, secret_key, data)
+      hmac = OpenSSL::HMAC.digest(digest, SECRET_KEY, data)
       base64_url_encode(hmac)
     end
 
-    def valid_signature?(data, signature, secret_key, algorithm)
-      expected_signature = generate_signature(data, secret_key, algorithm)
+    def valid_signature?(data, signature, algorithm)
+      expected_signature = generate_signature(data, algorithm)
       secure_compare(expected_signature, signature)
     end
 

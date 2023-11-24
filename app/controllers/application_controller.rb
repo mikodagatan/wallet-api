@@ -6,7 +6,7 @@ class ApplicationController < ActionController::API
     return render_unauthorized unless token
 
     token = token.split(' ')&.last
-    user_payload = JwtService.decode(token)
+    user_payload = Jwt.decode(token)
 
     return render_unauthorized unless user_payload
 
