@@ -12,13 +12,15 @@
 
 ActiveRecord::Schema[7.0].define(version: 2023_11_24_142754) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pgcrypto"
   enable_extension "plpgsql"
+  enable_extension "uuid-ossp"
 
-  create_table "transactions", force: :cascade do |t|
-    t.bigint "source_wallet_id"
-    t.bigint "target_wallet_id"
+  create_table "transactions", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.uuid "source_wallet_id"
+    t.uuid "target_wallet_id"
     t.decimal "amount", precision: 19, scale: 2, null: false
-    t.string "transaction_type", null: false
+    t.integer "transaction_type", null: false
     t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -26,7 +28,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_24_142754) do
     t.index ["target_wallet_id"], name: "index_transactions_on_target_wallet_id"
   end
 
-  create_table "users", force: :cascade do |t|
+  create_table "users", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
     t.string "email"
@@ -35,9 +37,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_24_142754) do
     t.index ["email"], name: "index_users_on_email", unique: true
   end
 
-  create_table "wallets", force: :cascade do |t|
+  create_table "wallets", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.string "entity_type", null: false
-    t.bigint "entity_id", null: false
+    t.uuid "entity_id", null: false
     t.decimal "balance", precision: 19, scale: 2, default: "0.0"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

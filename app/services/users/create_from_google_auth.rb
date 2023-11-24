@@ -1,17 +1,19 @@
 module Users
   class CreateFromGoogleAuth
-    attr_reader :google_auth_data
+    attr_reader :google_auth_data, :user
 
     def initialize(google_auth_data)
       @google_auth_data = google_auth_data
     end
 
     def call
-      user = User.where(email:).first_or_create(user_params)
+      ActiveRecord::Base.transaction do
+        @user = User.where(email:).first_or_initialize(user_params)
 
-      return user if user.persisted?
+        raise StandardError, user.errors.full_messages.join(', ') unless user.save
 
-      raise StandardError, user.errors.full_messages.join(', ') unless user.save
+        create_wallet
+      end
 
       user
     end
@@ -30,6 +32,12 @@ module Users
         last_name: names&.dig('familyName'),
         email:
       }
+    end
+
+    def create_wallet
+      return if user.wallet.present?
+
+      user.create_wallet
     end
   end
 end

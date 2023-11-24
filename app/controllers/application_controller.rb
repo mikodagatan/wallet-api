@@ -3,8 +3,11 @@ class ApplicationController < ActionController::API
 
   def authenticate_user
     token = request.headers['Authorization']&.split(' ')&.last
-    unless token && (user_payload = JwtService.decode(token))
+    user_payload = JwtService.decode(token)
+
+    if token.blank? || user_payload.blank?
       render json: { error: 'Unauthorized' }, status: :unauthorized
+      return
     end
 
     @current_user = User.find_by(email: user_payload['email'])
