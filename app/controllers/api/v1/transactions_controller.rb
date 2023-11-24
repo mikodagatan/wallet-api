@@ -7,7 +7,8 @@ module Api
         transaction = Transaction.new(transaction_params)
 
         if transaction.save
-          render json: transaction, status: :created
+          render json: TransactionSerializer.render(transaction),
+                 status: :created
         else
           render json: { errors: transaction.errors.full_messages }, status: :unprocessable_entity
         end
