@@ -1,6 +1,4 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Defines the root path route ("/")
-  # root "articles#index"
+  get '/auth/login', to: 'sessions#initiate_google_oauth2'
+  get '/auth/google_oauth2/callback', to: 'sessions#google_oauth2_callback'
 end
