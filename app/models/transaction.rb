@@ -8,7 +8,5 @@ class Transaction < ApplicationRecord
 
   private
 
-  def update_wallet_balances
-    # Implement logic to update wallet balances
-  end
+  def update_wallet_balances; end
 end
