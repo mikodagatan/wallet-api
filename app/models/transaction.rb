@@ -4,7 +4,7 @@ class Transaction < ApplicationRecord
 
   enum transaction_type: %i[withdraw deposit transfer]
 
-  validates_presence_of :amount
+  validates :amount, presence: true
 
   after_create :update_wallet_balances
 

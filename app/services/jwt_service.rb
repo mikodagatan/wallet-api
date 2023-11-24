@@ -7,6 +7,8 @@ class JwtService
     SECRET_KEY = ENV['JWT_SECRET_KEY'] || 'default_secret_key'
 
     def encode(payload, algorithm = 'HS256')
+      payload[:exp] = 1.minute.from_now.to_i # Expiration time
+
       header = { typ: 'JWT', alg: algorithm }
       encoded_header = base64_url_encode(header.to_json)
       encoded_payload = base64_url_encode(payload.to_json)
