@@ -17,7 +17,9 @@ ActiveRecord::Schema[7.0].define(version: 2023_11_24_081618) do
   create_table "transactions", force: :cascade do |t|
     t.bigint "source_wallet_id"
     t.bigint "target_wallet_id"
-    t.decimal "amount", precision: 19, scale: 2
+    t.decimal "amount", precision: 19, scale: 2, null: false
+    t.string "transaction_type", null: false
+    t.text "notes"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["source_wallet_id"], name: "index_transactions_on_source_wallet_id"
