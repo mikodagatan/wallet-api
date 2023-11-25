@@ -7,8 +7,6 @@ class Jwt
     SECRET_KEY = ENV['JWT_SECRET_KEY'] || 'default_secret_key'
 
     def encode(payload, algorithm = 'HS256')
-      payload[:exp] = 1.hour.from_now.to_i # Expiration time
-
       header = { typ: 'JWT', alg: algorithm }
       encoded_header = base64_url_encode(header.to_json)
       encoded_payload = base64_url_encode(payload.to_json)
@@ -21,18 +19,18 @@ class Jwt
       encoded_header, encoded_payload, signature = token.split('.')
       payload = JSON.parse(base64_url_decode(encoded_payload))
 
-      return nil if payload['exp'] && Time.now.to_i > payload['exp']
+      return nil if payload['exp'] && Time.now.to_i > payload['exp'].to_i
 
       payload if valid_signature?("#{encoded_header}.#{encoded_payload}", signature, algorithm)
     end
 
     def base64_url_encode(data)
-      Base64.strict_encode64(data).tr('+/', '-_').delete('=')
+      Base64.encode64(data).tr('+/', '-_').gsub(/[\n=]/, '')
     end
 
     def base64_url_decode(data)
-      padded_data = data + '=' * (4 - data.length % 4)
-      Base64.strict_decode64(padded_data.tr('-_', '+/'))
+      data += '=' * (4 - data.length.modulo(4))
+      Base64.decode64(data.tr('-_', '+/'))
     end
 
     def generate_signature(data, algorithm)
