@@ -12,8 +12,8 @@ RSpec.describe Wallet, type: :model do
       let(:wallet) { create(:wallet) }
 
       it 'returns all transactions related to the wallet' do
-        transaction1 = create(:transaction, source_wallet: wallet)
-        transaction2 = create(:transaction, target_wallet: wallet)
+        transaction1 = create(:deposit_transaction, target_wallet: wallet)
+        transaction2 = create(:withdrawal_transaction, source_wallet: wallet)
 
         expect(wallet.all_transactions).to include(transaction1, transaction2)
       end
@@ -23,13 +23,13 @@ RSpec.describe Wallet, type: :model do
       let!(:wallet) { create(:wallet) }
 
       it 'updates the balance based on credit and debit transactions' do
-        create(:transaction, target_wallet: wallet, amount: 30)
-        create(:transaction, target_wallet: wallet, amount: 10)
-        create(:transaction, source_wallet: wallet, amount: 50)
+        create(:deposit_transaction, target_wallet: wallet, amount: 30)
+        create(:deposit_transaction, target_wallet: wallet, amount: 10)
+        create(:withdrawal_transaction, source_wallet: wallet, amount: 20)
 
         wallet.update_balance
 
-        expect(wallet.balance).to eq(30 + 10 - 50)
+        expect(wallet.balance).to eq(30 + 10 - 20)
       end
     end
   end
