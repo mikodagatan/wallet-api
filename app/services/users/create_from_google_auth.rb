@@ -12,7 +12,7 @@ module Users
 
         raise StandardError, user.errors.full_messages.join(', ') unless user.save
 
-        create_wallet
+        user.create_wallet
       end
 
       user
@@ -32,12 +32,6 @@ module Users
         last_name: names&.dig('familyName'),
         email:
       }
-    end
-
-    def create_wallet
-      return if user.wallet.present?
-
-      user.create_wallet
     end
   end
 end
