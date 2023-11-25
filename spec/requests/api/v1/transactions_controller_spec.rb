@@ -2,17 +2,17 @@ require 'rails_helper'
 
 RSpec.describe Api::V1::TransactionsController, type: :request do
   let(:user) { create(:user) }
-  let(:source_wallet) { create(:wallet, entity: user) }
-  let(:target_wallet) { create(:wallet) }
+  let(:user_wallet) { user.wallet }
+  let(:other_wallet) { create(:wallet) }
 
   before do
-    create(:deposit_transaction, target_wallet: source_wallet)
+    create(:deposit_transaction, target_wallet: user_wallet)
   end
 
   describe 'GET #index' do
     before do
-      create(:transaction, source_wallet:, target_wallet:, amount: 50)
-      create(:transaction, source_wallet: target_wallet, target_wallet: source_wallet, amount: 30)
+      create(:deposit_transaction, target_wallet: user_wallet, amount: 50)
+      create(:deposit_transaction, target_wallet: user_wallet, amount: 30)
     end
 
     it 'returns a list of transactions for the current user' do
@@ -28,7 +28,7 @@ RSpec.describe Api::V1::TransactionsController, type: :request do
 
   describe 'GET #show' do
     it 'returns details of a specific transaction' do
-      transaction = create(:transaction, source_wallet:, target_wallet:, amount: 50)
+      transaction = create(:transaction, source_wallet: user_wallet, target_wallet: other_wallet, amount: 50)
 
       get "/api/v1/transactions/#{transaction.id}", headers: auth_headers(user)
 
@@ -41,7 +41,7 @@ RSpec.describe Api::V1::TransactionsController, type: :request do
 
   describe 'POST #create' do
     let(:params) do
-      { source_wallet_id: source_wallet.id, target_wallet_id: target_wallet.id, amount: 30, notes: 'Payment' }
+      { source_wallet_id: user_wallet.id, target_wallet_id: other_wallet.id, amount: 30, notes: 'Payment' }
     end
 
     it 'creates a new transaction' do
@@ -54,7 +54,7 @@ RSpec.describe Api::V1::TransactionsController, type: :request do
     end
 
     it 'returns errors if the transaction is not valid' do
-      invalid_params = { source_wallet_id: source_wallet.id, amount: -10 }
+      invalid_params = { source_wallet_id: user_wallet.id, amount: -10 }
 
       post '/api/v1/transactions', headers: auth_headers(user), params: invalid_params
 

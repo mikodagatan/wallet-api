@@ -12,14 +12,15 @@ module Api
       end
 
       def create
-        transaction = Transaction.new(transaction_params)
-
-        if transaction.save
-          render json: TransactionSerializer.render(transaction),
-                 status: :created
-        else
-          render json: { errors: transaction.errors.full_messages }, status: :unprocessable_entity
+        ActiveRecord::Base.transaction do
+          @transaction = Transaction.new(transaction_params)
+          @transaction.save!
         end
+
+        render json: TransactionSerializer.render(@transaction),
+               status: :created
+      rescue StandardError
+        render json: { errors: @transaction.errors.full_messages }, status: :unprocessable_entity
       end
 
       private

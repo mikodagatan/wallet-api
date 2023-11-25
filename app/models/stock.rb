@@ -1,6 +1,5 @@
 class Stock < ApplicationRecord
-  has_one :wallet, as: :entity,
-                   dependent: :destroy,
-                   inverse_of: :wallet
+  include HasWallet
+
   validates :name, :code, presence: true
 end

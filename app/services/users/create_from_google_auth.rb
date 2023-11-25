@@ -9,10 +9,7 @@ module Users
     def call
       ActiveRecord::Base.transaction do
         @user = User.where(email:).first_or_initialize(user_params)
-
-        raise StandardError, user.errors.full_messages.join(', ') unless user.save
-
-        user.create_wallet
+        user.save!
       end
 
       user

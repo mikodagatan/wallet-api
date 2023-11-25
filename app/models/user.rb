@@ -1,7 +1,5 @@
 class User < ApplicationRecord
-  has_one :wallet, as: :entity,
-                   dependent: :destroy,
-                   inverse_of: :entity
+  include HasWallet
 
   has_many :debit_transactions, through: :wallet
   has_many :credit_transactions, through: :wallet

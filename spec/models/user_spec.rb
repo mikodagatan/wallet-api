@@ -1,8 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe User, type: :model do
+  it_behaves_like 'HasWallet'
+
   describe 'associations' do
-    it { should have_one(:wallet).dependent(:destroy).inverse_of(:entity) }
     it { should have_many(:debit_transactions).through(:wallet) }
     it { should have_many(:credit_transactions).through(:wallet) }
   end

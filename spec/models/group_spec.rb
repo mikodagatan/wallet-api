@@ -1,9 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe Group, type: :model do
-  describe 'associations' do
-    it { should have_one(:wallet).dependent(:destroy).inverse_of(:wallet).class_name('Wallet') }
-  end
+  it_behaves_like 'HasWallet'
 
   describe 'validations' do
     it { should validate_presence_of(:name) }
