@@ -7,10 +7,9 @@ class ApplicationController < ActionController::API
 
     token = token.split(' ')&.last
     user_payload = Jwt.decode(token)
-
     return render_unauthorized unless user_payload
 
-    @current_user = User.find_by(email: user_payload['email'])
+    @current_user = User.find_by(id: user_payload['id'])
 
     render json: { error: 'User not found' }, status: :unauthorized unless @current_user
   end

@@ -1,6 +1,6 @@
 def auth_headers(user)
-  token = Jwt.encode({ email: user.email })
+  token = Jwt.encode({ id: user.id })
   {
-    Authorization: "Bearer #{token}"
+    'Authorization': "Bearer #{token}"
   }
 end

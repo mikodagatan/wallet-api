@@ -8,7 +8,7 @@ class SessionsController < ApplicationController
   def google_oauth2_callback
     user_info = google_auth.handle_callback(params)
     user = Users::CreateFromGoogleAuth.new(user_info).call
-    token = Jwt.encode({ email: user.email })
+    token = Jwt.encode({ id: user.id })
 
     render json: { token: }
   rescue StandardError => e
