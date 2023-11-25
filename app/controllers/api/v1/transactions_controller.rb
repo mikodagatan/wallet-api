@@ -7,7 +7,7 @@ module Api
       end
 
       def show
-        transaction = Transaction.find_by!(id: params[:id])
+        transaction = Transaction.find(params[:id])
         render json: TransactionSerializer.render(transaction)
       end
 

@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :transactions, only: %i[index create show]
+      resources :groups, only: %i[show create update]
+      resources :stocks, only: %i[show create update]
     end
   end
 end

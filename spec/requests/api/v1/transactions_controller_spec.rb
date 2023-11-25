@@ -60,7 +60,7 @@ RSpec.describe Api::V1::TransactionsController, type: :request do
 
       expect(response).to have_http_status(:unprocessable_entity)
       json_response = JSON.parse(response.body)
-      expect(json_response).to have_key('errors')
+      expect(json_response).to eq({ 'errors' => ['Amount must be greater than 0'] })
     end
   end
 end
