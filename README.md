@@ -1,24 +1,20 @@
-# README
+# Wallet API
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+A simple but efficient solution to depositing, withdrawing, and transferring your cash.
 
-Things you may want to cover:
+## Setup
 
-* Ruby version
+- Create an `.env` file with the structure from `.env.example`.
+- run `bundle install`
+- Make sure PostgreSQL and Redis are running.
+- run `rails db:create`
+- run `rails db:migrate`
+- run `rails s`
 
-* System dependencies
+## Create a User
 
-* Configuration
+To create a user, we're using Google email authentication. To authenticate and create a user, go to `/auth/login`, with a GET request. The API will respond with a redirect url. Redirect your user to the given redirect url to let him go through the google authentication process.
 
-* Database creation
+## Authorization
 
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+The API uses JWT in certain endpoints. Use the `/auth/login` endpoint and with a successful authentication, Google will redirect to a callback function which will provide the token. Add an `Authorization` header with the `Bearer <token>` value in your requests.

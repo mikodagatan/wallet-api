@@ -2,6 +2,7 @@ PATH
   remote: lib/latest_stock_price
   specs:
     latest_stock_price (0.0.1)
+      dotenv
 
 GEM
   remote: https://rubygems.org/
