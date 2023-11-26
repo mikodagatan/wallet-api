@@ -1,6 +1,12 @@
 module Api
   module V1
     class StocksController < ApplicationController
+      def index
+        stocks = Stock.all
+
+        render json: StockSerializer.render(stocks)
+      end
+
       def show
         group = Stock.find(params[:id])
         render json: StockSerializer.render(group)

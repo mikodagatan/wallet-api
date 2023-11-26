@@ -3,6 +3,22 @@ require 'rails_helper'
 RSpec.describe Api::V1::StocksController, type: :request do
   let(:user) { create(:user) }
 
+  describe 'GET #index' do
+    let!(:stocks) { create_list(:stock, 2) }
+
+    it 'returns a list of stocks' do
+      get '/api/v1/stocks', headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+
+      json_response = JSON.parse(response.body)
+
+      expect(json_response).to be_an(Array)
+      expect(json_response.length).to eq(2)
+      expect(json_response[1]['id']).to eq(stocks.last.id)
+    end
+  end
+
   describe 'GET #show' do
     let!(:stock) { create(:stock) }
 

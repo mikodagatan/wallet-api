@@ -3,6 +3,22 @@ require 'rails_helper'
 RSpec.describe Api::V1::GroupsController, type: :request do
   let(:user) { create(:user) }
 
+  describe 'GET #index' do
+    let!(:groups) { create_list(:group, 2) }
+
+    it 'returns a list of groups' do
+      get '/api/v1/groups', headers: auth_headers(user)
+
+      expect(response).to have_http_status(:ok)
+
+      json_response = JSON.parse(response.body)
+
+      expect(json_response).to be_an(Array)
+      expect(json_response.length).to eq(2)
+      expect(json_response[1]['id']).to eq(groups.last.id)
+    end
+  end
+
   describe 'GET #show' do
     let!(:group) { create(:group) }
 

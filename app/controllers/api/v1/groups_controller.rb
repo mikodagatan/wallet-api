@@ -1,6 +1,12 @@
 module Api
   module V1
     class GroupsController < ApplicationController
+      def index
+        groups = Group.all
+
+        render json: GroupSerializer.render(groups)
+      end
+
       def show
         group = Group.find(params[:id])
         render json: GroupSerializer.render(group)
