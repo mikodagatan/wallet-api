@@ -11,6 +11,10 @@ A simple but efficient solution to depositing, withdrawing, and transferring you
 - run `rails db:migrate`
 - run `rails s`
 
+## Google Auth setup
+
+To get your `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`, refer to this [documentation](docs/google_auth_setup.md) to help you out.
+
 ## Create a User
 
 To create a user, we're using Google email authentication. To authenticate and create a user, go to `/auth/login`, with a GET request. The API will respond with a redirect url. Redirect your user to the given redirect url to let him go through the google authentication process.
