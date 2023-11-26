@@ -2,6 +2,8 @@
 require 'simplecov'
 SimpleCov.start 'rails' do
   add_group 'Services', 'app/services'
+
+  add_filter 'lib/latest_stock_price'
 end
 
 require 'spec_helper'
