@@ -1,0 +1,3 @@
+[submodule "latest_stock_price"]
+    path = lib/latest_stock_price
+    url = https://github.com/mikodagatan/latest_stock_price.git

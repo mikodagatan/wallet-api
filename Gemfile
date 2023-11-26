@@ -12,6 +12,8 @@ gem 'rails', '~> 7.0.8'
 gem 'redis'
 gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
 
+gem 'latest_stock_price', path: 'lib/latest_stock_price'
+
 group :development, :test do
   gem 'database_cleaner'
   gem 'debug', platforms: %i[mri mingw x64_mingw]
