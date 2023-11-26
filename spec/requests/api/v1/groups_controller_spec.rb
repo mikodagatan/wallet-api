@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::GroupsController, type: :request do
+  it_behaves_like 'HasPagination'
+  it_behaves_like 'HasSerialization'
+
   let(:user) { create(:user) }
 
   describe 'GET #index' do
@@ -13,9 +16,8 @@ RSpec.describe Api::V1::GroupsController, type: :request do
 
       json_response = JSON.parse(response.body)
 
-      expect(json_response).to be_an(Array)
-      expect(json_response.length).to eq(2)
-      expect(json_response[1]['id']).to eq(groups.last.id)
+      expect(json_response).to have_key('groups')
+      expect(json_response['groups'][1]['id']).to eq(groups.last.id)
     end
   end
 
@@ -27,7 +29,7 @@ RSpec.describe Api::V1::GroupsController, type: :request do
         get api_v1_group_path(group), headers: auth_headers(user)
 
         expect(response).to have_http_status(:ok)
-        expected_json = JSON.parse(GroupSerializer.render(group))
+        expected_json = { group: GroupSerializer.render_as_hash(group) }.deep_stringify_keys!
         actual_json = JSON.parse(response.body)
         expect(actual_json).to eq(expected_json)
       end
@@ -53,7 +55,7 @@ RSpec.describe Api::V1::GroupsController, type: :request do
         end.to change(Group, :count).by(1)
 
         expect(response).to have_http_status(:created)
-        expected_json = JSON.parse(GroupSerializer.render(Group.last))
+        expected_json = { group: GroupSerializer.render_as_hash(Group.last) }.deep_stringify_keys!
         actual_json = JSON.parse(response.body)
         expect(actual_json).to eq(expected_json)
       end
@@ -81,7 +83,7 @@ RSpec.describe Api::V1::GroupsController, type: :request do
         put api_v1_group_path(group), headers: auth_headers(user), params: valid_params
 
         expect(response).to have_http_status(:ok)
-        expected_json = JSON.parse(GroupSerializer.render(group.reload))
+        expected_json = { group: GroupSerializer.render_as_hash(group.reload) }.deep_stringify_keys!
         actual_json = JSON.parse(response.body)
         expect(actual_json).to eq(expected_json)
       end

@@ -2,14 +2,14 @@ module Api
   module V1
     class GroupsController < ApplicationController
       def index
-        groups = Group.all
+        groups = paginate(Group.all)
 
-        render json: GroupSerializer.render(groups)
+        render json: render_collection(groups)
       end
 
       def show
         group = Group.find(params[:id])
-        render json: GroupSerializer.render(group)
+        render json: render_record(group)
       end
 
       def create
@@ -18,7 +18,7 @@ module Api
           @group.save!
         end
 
-        render json: GroupSerializer.render(@group),
+        render json: render_record(@group),
                status: :created
       rescue StandardError
         render json: { errors: @group.errors.full_messages }, status: :unprocessable_entity
@@ -28,7 +28,7 @@ module Api
         group = Group.find(params[:id])
 
         if group.update(group_params)
-          render json: GroupSerializer.render(group)
+          render json: render_record(group)
         else
           render json: { errors: group.errors.full_messages }, status: :unprocessable_entity
         end

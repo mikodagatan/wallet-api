@@ -2,13 +2,14 @@ module Api
   module V1
     class TransactionsController < ApplicationController
       def index
-        transactions = @current_user.all_transactions
-        render json: TransactionSerializer.render(transactions)
+        transactions = paginate(@current_user.all_transactions)
+
+        render json: render_collection(transactions)
       end
 
       def show
         transaction = Transaction.find(params[:id])
-        render json: TransactionSerializer.render(transaction)
+        render json: render_record(transaction)
       end
 
       def create
@@ -17,7 +18,7 @@ module Api
           @transaction.save!
         end
 
-        render json: TransactionSerializer.render(@transaction),
+        render json: render_record(@transaction),
                status: :created
       rescue StandardError
         render json: { errors: @transaction.errors.full_messages }, status: :unprocessable_entity

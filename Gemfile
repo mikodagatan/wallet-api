@@ -5,6 +5,7 @@ ruby '3.1.1'
 gem 'blueprinter'
 gem 'bootsnap', require: false
 gem 'httparty'
+gem 'kaminari'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 5.0'
 gem 'rack-cors'

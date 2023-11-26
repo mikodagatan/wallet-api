@@ -2,14 +2,14 @@ module Api
   module V1
     class StocksController < ApplicationController
       def index
-        stocks = Stock.all
+        stocks = paginate(Stock.all)
 
-        render json: StockSerializer.render(stocks)
+        render json: render_collection(stocks)
       end
 
       def show
-        group = Stock.find(params[:id])
-        render json: StockSerializer.render(group)
+        stock = Stock.find(params[:id])
+        render json: render_record(stock)
       end
 
       def create
@@ -18,7 +18,7 @@ module Api
           @stock.save!
         end
 
-        render json: StockSerializer.render(@stock),
+        render json: render_record(@stock),
                status: :created
       rescue StandardError
         render json: { errors: @stock.errors.full_messages }, status: :unprocessable_entity
@@ -28,7 +28,7 @@ module Api
         stock = Stock.find(params[:id])
 
         if stock.update(stock_params)
-          render json: StockSerializer.render(stock)
+          render json: render_record(stock)
         else
           render json: { errors: stock.errors.full_messages }, status: :unprocessable_entity
         end

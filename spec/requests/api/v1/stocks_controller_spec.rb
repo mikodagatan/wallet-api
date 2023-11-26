@@ -1,6 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Api::V1::StocksController, type: :request do
+  it_behaves_like 'HasPagination'
+  it_behaves_like 'HasSerialization'
+  
   let(:user) { create(:user) }
 
   describe 'GET #index' do
@@ -13,9 +16,8 @@ RSpec.describe Api::V1::StocksController, type: :request do
 
       json_response = JSON.parse(response.body)
 
-      expect(json_response).to be_an(Array)
-      expect(json_response.length).to eq(2)
-      expect(json_response[1]['id']).to eq(stocks.last.id)
+      expect(json_response).to have_key('stocks')
+      expect(json_response['stocks'][1]['id']).to eq(stocks.last.id)
     end
   end
 
@@ -27,7 +29,8 @@ RSpec.describe Api::V1::StocksController, type: :request do
         get api_v1_stock_path(stock), headers: auth_headers(user)
 
         expect(response).to have_http_status(:ok)
-        expected_json = JSON.parse(StockSerializer.render(stock))
+
+        expected_json = { stock: StockSerializer.render_as_hash(stock) }.deep_stringify_keys!
         actual_json = JSON.parse(response.body)
         expect(actual_json).to eq(expected_json)
       end
@@ -53,7 +56,7 @@ RSpec.describe Api::V1::StocksController, type: :request do
         end.to change(Stock, :count).by(1)
 
         expect(response).to have_http_status(:created)
-        expected_json = JSON.parse(StockSerializer.render(Stock.last))
+        expected_json = { stock: StockSerializer.render_as_hash(Stock.last) }.deep_stringify_keys!
         actual_json = JSON.parse(response.body)
         expect(actual_json).to eq(expected_json)
       end
@@ -81,7 +84,7 @@ RSpec.describe Api::V1::StocksController, type: :request do
         put api_v1_stock_path(stock), headers: auth_headers(user), params: valid_params
 
         expect(response).to have_http_status(:ok)
-        expected_json = JSON.parse(StockSerializer.render(stock.reload))
+        expected_json = { stock: StockSerializer.render_as_hash(stock.reload) }.deep_stringify_keys!
         actual_json = JSON.parse(response.body)
         expect(actual_json).to eq(expected_json)
       end

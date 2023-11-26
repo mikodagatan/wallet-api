@@ -1,4 +1,8 @@
 class ApplicationController < ActionController::API
+  include HasPagination
+  include HasSerialization
+  include HasResponseRendering
+
   before_action :authenticate_user
 
   rescue_from ActiveRecord::RecordNotFound, with: :render_not_found
